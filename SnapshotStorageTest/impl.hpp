@@ -48,7 +48,7 @@ namespace BMMQ {
 				//       For ease of integrating this on ::write()
 				return addressReturnData(false, new std::tuple<poolsizetype, memsizetype, memsizetype>(
 					std::distance(pool.begin(), iter_start),
-					nextpoolentry->second - iterstart->second,
+					0,
 					0));
 			else break;
 		}
