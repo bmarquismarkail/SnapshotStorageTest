@@ -17,7 +17,12 @@ namespace BMMQ {
 		if (at >= pool.back().first) {
 			auto endAddress = pool.back().first + (mem.size() - pool.back().second);
 			if (at > endAddress)
-				return addressReturnData(false, new std::tuple<poolsizetype, memsizetype, memsizetype>(0, 0, 0));
+				// TODO: Return the index of the last entry, as well as the size of the vector
+				//       For ease of integrating this on ::write()
+				return addressReturnData(false, new std::tuple<poolsizetype, memsizetype, memsizetype>(
+					pool.size(),
+					mem.size(),
+					0));
 			else {
 				auto relofs = at - pool.back().first;
 				auto capacity = endAddress - at;
