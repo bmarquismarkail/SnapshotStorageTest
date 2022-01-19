@@ -44,7 +44,12 @@ namespace BMMQ {
 
 			auto endAddress = iter_start->first + nextpoolentry->second - 1;
 			if (at > endAddress)
-				return addressReturnData(false, new std::tuple<poolsizetype, memsizetype, memsizetype>(0, 0, 0));
+				// TODO: Return the index of this entry, as well as the size of the pool
+				//       For ease of integrating this on ::write()
+				return addressReturnData(false, new std::tuple<poolsizetype, memsizetype, memsizetype>(
+					std::distance(pool.begin(), iter_start),
+					nextpoolentry->second - iterstart->second,
+					0));
 			else break;
 		}
 
