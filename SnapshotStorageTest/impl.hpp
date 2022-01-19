@@ -4,7 +4,7 @@
 
 namespace BMMQ {
 
-	addressReturnData::addressReturnData(bool retFlag, std::tuple< poolsizetype, memsizetype, memsizetype>* info)
+	addressReturnData::addressReturnData(bool retFlag, std::tuple< poolsizetype, memsizetype, memsizetype> info)
 		: isAddressInSnapshot(retFlag), info(info) {}
 
 	template<typename AddressType, typename DataType>
@@ -12,7 +12,7 @@ namespace BMMQ {
 	(AddressType at) {
 		auto entry_range = 0;
 		if (pool.empty() || at < pool.front().first)
-			return addressReturnData(false, new std::tuple<poolsizetype, memsizetype, memsizetype>(0, 0, 0));
+			return addressReturnData(false, std::make_tuple(0, 0, 0));
 
 		// if the last entry doesn't have it, then none will:
 		if (at >= pool.back().first) {
@@ -20,14 +20,14 @@ namespace BMMQ {
 			if (at > endAddress)
 				// TODO: Return the index of the last entry, as well as the size of the vector
 				//       For ease of integrating this on ::write()
-				return addressReturnData(false, new std::tuple<poolsizetype, memsizetype, memsizetype>(
+				return addressReturnData(false, std::make_tuple(
 					pool.size(),
 					mem.size(),
 					0));
 			else {
 				auto relofs = at - pool.back().first;
 				auto capacity = endAddress - at;
-				return addressReturnData(true, new std::tuple<poolsizetype, memsizetype, memsizetype>(
+				return addressReturnData(true, std::make_tuple(
 					pool.size() - 1,
 					relofs,
 					capacity));
@@ -51,7 +51,7 @@ namespace BMMQ {
 			if (at > endAddress)
 				// TODO: Return the index of this entry, as well as the size of the pool
 				//       For ease of integrating this on ::write()
-				return addressReturnData(false, new std::tuple<poolsizetype, memsizetype, memsizetype>(
+				return addressReturnData(false, std::make_tuple(
 					std::distance(pool.begin(), iter_start),
 					0,
 					0));
@@ -62,12 +62,12 @@ namespace BMMQ {
 
 		if (entry_range >= target_offset) {
 			//return addressReturnData(true, &(*iter_start), (iter_start->second + target_offset) == 0);
-			return addressReturnData(true, new std::tuple<poolsizetype, memsizetype, memsizetype>(
+			return addressReturnData(true, std::make_tuple(
 				std::distance(pool.begin(), iter_start),
 				(target_offset),
 				entry_range - (at - iter_start->first) ));
 		}
-		return addressReturnData(false, new std::tuple<poolsizetype, memsizetype, memsizetype>(0, 0, 0));
+		return addressReturnData(false, std::make_tuple(0, 0, 0));
 	}
 
 	template<typename AddressType, typename DataType>
