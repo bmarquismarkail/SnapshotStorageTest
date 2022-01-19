@@ -17,15 +17,20 @@ int main()
     DataType* stream = new DataType[5] { 1, 2, 3, 4, 5, };
     s.write(stream, 10, 5);
 
-    //overwrite test:
+    //allocation test: before
     DataType* newStream = new DataType[5]{ 5, 4, 33, 2, 1, };
-    
     s.write(newStream, 0, 5);
 
-    DataType output[15];
-    s.read(output, 0, 15);
+    //allocation test: after
+    DataType* newStream2 = new DataType[5]{ 6, 7, 88, 9, 10, };
+    s.write(newStream2, 15, 5);
 
-    for (int i = 0; i < 15; i++) {
+
+
+    DataType output[20];
+    s.read(output, 0, 20);
+
+    for (int i = 0; i < 20; i++) {
         std::cout << (int)output[i] << '|';
     }
     return 0;
