@@ -18,7 +18,7 @@ namespace BMMQ {
 		// 1, the pool index of the address,
 		// 2, the offset where the data resides relative to the pool's absolute offset
 		// and 3, the length from the data's position to the end of the pool's data.
-		std::tuple< poolsizetype, memsizetype, memsizetype>* info;
+		std::tuple< poolsizetype, memsizetype, memsizetype> info;
 		addressReturnData(bool retFlag, std::tuple< poolsizetype, memsizetype, memsizetype>* info);
 	};
 
