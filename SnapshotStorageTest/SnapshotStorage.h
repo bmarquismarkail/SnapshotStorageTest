@@ -7,7 +7,7 @@
 #include <iostream>
 
 using poolsizetype = std::vector< std::pair< AddressType, std::size_t>>::size_type;
-using memsizetype = std::vector<DataType>::size_type;
+using memindextype = std::vector<DataType>::difference_type;
 
 namespace BMMQ {
 
@@ -18,8 +18,8 @@ namespace BMMQ {
 		// 1, the pool index of the address,
 		// 2, the offset where the data resides relative to the pool's absolute offset
 		// and 3, the length from the data's position to the end of the pool's data.
-		std::tuple< poolsizetype, memsizetype, memsizetype> info;
-		addressReturnData(bool retFlag, std::tuple< poolsizetype, memsizetype, memsizetype> info);
+		std::tuple< poolsizetype, memindextype, memindextype> info;
+		addressReturnData(bool retFlag, std::tuple< poolsizetype, memindextype, memindextype> info);
 	};
 
 

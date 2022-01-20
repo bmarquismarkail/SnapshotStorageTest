@@ -5,6 +5,7 @@ using AddressType = unsigned short;
 using DataType = unsigned char;
 
 #include <iostream>
+#include <stdlib.h>
 
 #include "SnapshotStorage.h"
 
@@ -25,7 +26,13 @@ int main()
     DataType* newStream2 = new DataType[5]{ 6, 7, 88, 9, 10, };
     s.write(newStream2, 15, 5);
 
+    //overwrite test: all
+    DataType* newStream3 = new DataType[20];
+    for (int i = 0; i < 20; i++) {
+        newStream3[i] = (i+1) *5;
+    }
 
+    s.write(newStream3, 0, 20);
 
     DataType output[20];
     s.read(output, 0, 20);

@@ -4,7 +4,7 @@
 
 namespace BMMQ {
 
-	addressReturnData::addressReturnData(bool retFlag, std::tuple< poolsizetype, memsizetype, memsizetype> info)
+	addressReturnData::addressReturnData(bool retFlag, std::tuple< poolsizetype, memindextype, memindextype> info)
 		: isAddressInSnapshot(retFlag), info(info) {}
 
 	template<typename AddressType, typename DataType>
@@ -17,16 +17,16 @@ namespace BMMQ {
 		// if the last entry doesn't have it, then none will:
 		if (at >= pool.back().first) {
 			auto endAddress = pool.back().first + (mem.size() - pool.back().second) - 1;
+			auto capacity = endAddress - at;
 			if (at > endAddress)
 				// TODO: Return the index of the last entry, as well as the size of the vector
 				//       For ease of integrating this on ::write()
 				return addressReturnData(false, std::make_tuple(
 					pool.size(),
 					mem.size(),
-					0));
+					capacity));
 			else {
 				auto relofs = at - pool.back().first;
-				auto capacity = endAddress - at;
 				return addressReturnData(true, std::make_tuple(
 					pool.size() - 1,
 					relofs,
@@ -99,19 +99,41 @@ namespace BMMQ {
 		auto p = isAddressInSnapshot(address);
 		auto info = p.info;
 		auto new_alloc_len = count;
-		//auto pool_index = (pool.at(std::get<0>(info)).second);
 		auto pool_index = std::get<0>(info);
 		auto entrycap = std::get<2>(info);
 		if (!p.isAddressInSnapshot) {
 			memindex = std::get<1>(info);
-			std::advance(poolit, pool_index);
-			poolit = pool.insert(poolit, std::make_pair(address, memindex));
+			if ( entrycap == -1 ) {
+				std::advance(poolit, pool_index - 1);
+			}
+			else {
+				std::advance(poolit, pool_index);
+				poolit = pool.insert(poolit, std::make_pair(address, memindex));
+			}
 			std::for_each(std::next(poolit), pool.end(), [&new_alloc_len](auto& pe) {pe.second += new_alloc_len; });
 		}
 		else {
+			std::advance(poolit, pool_index);
 			if (count >= entrycap) {
 				memindex = pool.at(pool_index).second + std::get<1>(info);
-				new_alloc_len = count - entrycap;
+				auto endaddress = address + count - 1;
+				auto address_return_data = isAddressInSnapshot(endaddress);
+				auto address_return_info = address_return_data.info;
+				auto delpoolit = pool.end();
+				
+				if (std::get<0>(address_return_info) != pool.size())
+					std::advance(delpoolit, std::get<0>(address_return_info) - pool.size() );
+
+				if (delpoolit == pool.end()) {
+					entrycap = mem.size() - memindex;
+				}
+				else if (delpoolit != poolit) {
+					entrycap = delpoolit->second + std::get<1>(address_return_info) + 1 ;
+					if (std::next(poolit) == delpoolit) pool.erase(delpoolit);
+					else pool.erase(std::next(poolit), delpoolit);
+				}
+
+				new_alloc_len -= entrycap;
 			}
 		}
 		auto streamit = stream;
