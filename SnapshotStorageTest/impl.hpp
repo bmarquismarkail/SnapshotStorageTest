@@ -77,7 +77,7 @@ namespace BMMQ {
 		AddressType index = address;
 		for (size_t i = 0; i < count; i++) {
 			auto p = isAddressInSnapshot(index);
-			auto info = *(p.info);
+			auto info = p.info;
 			*streamIterator++ = p.isAddressInSnapshot ? mem[(pool.at(std::get<0>(info)).second) + std::get<1>(info)] : 0;
 			index++;
 		}
@@ -97,7 +97,7 @@ namespace BMMQ {
 		}
 
 		auto p = isAddressInSnapshot(address);
-		auto info = *(p.info);
+		auto info = p.info;
 		auto new_alloc_len = count;
 		//auto pool_index = (pool.at(std::get<0>(info)).second);
 		auto pool_index = std::get<0>(info);
