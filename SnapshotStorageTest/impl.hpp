@@ -110,31 +110,31 @@ namespace BMMQ {
 				std::advance(poolit, pool_index);
 				poolit = pool.insert(poolit, std::make_pair(address, memindex));
 			}
+			std::for_each(std::next(poolit), pool.end(), [&new_alloc_len](auto& pe) {pe.second += new_alloc_len; });
 		}
 		else {
-			memindex = pool.at(pool_index).second + std::get<1>(info);
 			std::advance(poolit, pool_index);
-		}
-			
-		if (count >= entrycap) {
-			auto endaddress = address + count - 1;
-			auto address_return_data = isAddressInSnapshot(endaddress);
-			auto address_return_info = address_return_data.info;
-			auto delpoolit = pool.end();
+			if (count >= entrycap) {
+				memindex = pool.at(pool_index).second + std::get<1>(info);
+				auto endaddress = address + count - 1;
+				auto address_return_data = isAddressInSnapshot(endaddress);
+				auto address_return_info = address_return_data.info;
+				auto delpoolit = pool.end();
+				
+				if (std::get<0>(address_return_info) != pool.size())
+					std::advance(delpoolit, std::get<0>(address_return_info) - pool.size() );
 
-			if (std::get<0>(address_return_info) != pool.size())
-				std::advance(delpoolit, std::get<0>(address_return_info) - pool.size() );
+				if (delpoolit == pool.end()) {
+					entrycap = mem.size() - memindex;
+				}
+				else if (delpoolit != poolit) {
+					entrycap = delpoolit->second + std::get<1>(address_return_info) + 1 ;
+					if (std::next(poolit) == delpoolit) pool.erase(delpoolit);
+					else pool.erase(std::next(poolit), delpoolit);
+				}
 
-			if (delpoolit == pool.end()) {
-				entrycap = mem.size() - memindex;
+				new_alloc_len -= entrycap;
 			}
-			else if (delpoolit != poolit) {
-				entrycap = delpoolit->second + std::get<1>(address_return_info) + 1 ;
-				if (std::next(poolit) == delpoolit) pool.erase(delpoolit);
-				else pool.erase(std::next(poolit), delpoolit);
-			}
-
-			new_alloc_len -= entrycap;
 		}
 		auto streamit = stream;
 		std::advance(memit, memindex);
@@ -143,7 +143,6 @@ namespace BMMQ {
 		std::advance(memit, new_alloc_len);
 		stream += new_alloc_len;
 		std::for_each_n(memit, count - new_alloc_len, [&stream](auto& d) {d = *stream++; });
-		std::for_each(std::next(poolit), pool.end(), [&new_alloc_len](auto& pe) {pe.second += new_alloc_len; });
 		return;
 	}
 }
