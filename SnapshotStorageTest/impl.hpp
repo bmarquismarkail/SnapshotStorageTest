@@ -75,27 +75,28 @@ namespace BMMQ {
 	template<typename AddressType, typename DataType>
 	void SnapshotStorage<AddressType, DataType>::read
 	(DataType* stream, AddressType address, AddressType count) {
-		if ( count > std::numeric_limits<AddressType>::max() - address)
-			count = std::numeric_limits<AddressType>::max() - address;
 
+		AddressType maxaddress = std::numeric_limits<AddressType>::max();
+		AddressType bounds = maxaddress - address;
+		count = std::min(bounds, count);
 		if (count == 0) return;
 
 		DataType* streamIterator = stream;
 		AddressType index = address;
 		for (size_t i = 0; i < count; i++) {
-			auto p = isAddressInSnapshot(index);
+			auto p = isAddressInSnapshot(index++);
 			auto info = p.info;
 			*streamIterator++ = p.isAddressInSnapshot ? mem[(pool.at(std::get<0>(info)).second) + std::get<1>(info)] : 0;
-			index++;
 		}
 	}
 
 	template<typename AddressType, typename DataType>
 	void SnapshotStorage<AddressType, DataType>::write
 	(DataType* stream, AddressType address, typename AddressType count) {
-		if (count > std::numeric_limits<AddressType>::max() - address)
-			count = std::numeric_limits<AddressType>::max() - address ;
-
+		
+		AddressType maxaddress = std::numeric_limits<AddressType>::max();
+		AddressType bounds = maxaddress - address;
+		count = std::min(bounds, count);
 		if (count == 0) return;
 
 		auto memit = mem.begin();
