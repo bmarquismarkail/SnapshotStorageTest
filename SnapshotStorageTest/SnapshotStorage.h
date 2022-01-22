@@ -33,8 +33,8 @@ namespace BMMQ {
 		std::vector<DataType> mem;
 		addressReturnData<AddressType, DataType> isAddressInSnapshot(AddressType at);
 	public:
-		void read(DataType* stream, AddressType address, std::size_t count);
-		void write(DataType* stream, AddressType address, std::size_t count);
+		void read(DataType* stream, AddressType address, typename std::vector<DataType>::size_type count);
+		void write(DataType* stream, AddressType address, typename std::vector<DataType>::size_type count);
 	};
 
 }

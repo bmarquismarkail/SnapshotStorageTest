@@ -39,7 +39,7 @@ namespace BMMQ {
 		// the read and write functions will sort if necessary
 		// so all we need to do is check adjacent elements
 		auto iter_start = pool.begin();
-		for (; std::next(iter_start) != pool.end(); ++iter_start) {
+		for (; std::next(iter_start) != std::prev(pool.end()); ++iter_start) {
 			auto nextpoolentry = std::next(iter_start);
 			if (at >= nextpoolentry->first)
 				continue;
@@ -73,7 +73,7 @@ namespace BMMQ {
 
 	template<typename AddressType, typename DataType>
 	void SnapshotStorage<AddressType, DataType>::read
-	(DataType* stream, AddressType address, std::size_t count) {
+	(DataType* stream, AddressType address, typename std::vector<DataType>::size_type count) {
 		DataType* streamIterator = stream;
 		AddressType index = address;
 		for (size_t i = 0; i < count; i++) {
@@ -86,7 +86,7 @@ namespace BMMQ {
 
 	template<typename AddressType, typename DataType>
 	void SnapshotStorage<AddressType, DataType>::write
-	(DataType* stream, AddressType address, std::size_t count) {
+	(DataType* stream, AddressType address, typename std::vector<DataType>::size_type count) {
 		auto memit = mem.begin();
 		auto poolit = pool.begin();
 		auto memindex = 0;
