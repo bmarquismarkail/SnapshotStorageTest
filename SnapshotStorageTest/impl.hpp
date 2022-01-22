@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <iterator>
 #include <cstdlib>
+#include <limits>
 
 namespace BMMQ {
 
@@ -73,7 +74,12 @@ namespace BMMQ {
 
 	template<typename AddressType, typename DataType>
 	void SnapshotStorage<AddressType, DataType>::read
-	(DataType* stream, AddressType address, typename std::vector<DataType>::size_type count) {
+	(DataType* stream, AddressType address, AddressType count) {
+		if ( count > std::numeric_limits<AddressType>::max() - address)
+			count = std::numeric_limits<AddressType>::max() - address;
+
+		if (count == 0) return;
+
 		DataType* streamIterator = stream;
 		AddressType index = address;
 		for (size_t i = 0; i < count; i++) {
@@ -86,7 +92,12 @@ namespace BMMQ {
 
 	template<typename AddressType, typename DataType>
 	void SnapshotStorage<AddressType, DataType>::write
-	(DataType* stream, AddressType address, typename std::vector<DataType>::size_type count) {
+	(DataType* stream, AddressType address, typename AddressType count) {
+		if (count > std::numeric_limits<AddressType>::max() - address)
+			count = std::numeric_limits<AddressType>::max() - address ;
+
+		if (count == 0) return;
+
 		auto memit = mem.begin();
 		auto poolit = pool.begin();
 		auto memindex = 0;
