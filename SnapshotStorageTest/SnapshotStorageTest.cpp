@@ -1,13 +1,14 @@
 // SnapshotStorageTest.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-using AddressType = unsigned short;
-using DataType = unsigned char;
 
 #include <iostream>
 #include <stdlib.h>
 
 #include "SnapshotStorage.h"
+
+using AddressType = unsigned short;
+using DataType = unsigned char;
 
 int main()
 {

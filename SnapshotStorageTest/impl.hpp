@@ -4,15 +4,16 @@
 
 namespace BMMQ {
 
-	addressReturnData::addressReturnData(bool retFlag, std::tuple< poolsizetype, memindextype, memindextype> info)
+	template<typename A, typename D>
+	addressReturnData<A,D>::addressReturnData(bool retFlag, std::tuple< poolsizetype<A>, memindextype<D>, memindextype<D>> info)
 		: isAddressInSnapshot(retFlag), info(info) {}
 
 	template<typename AddressType, typename DataType>
-	addressReturnData SnapshotStorage<AddressType, DataType>::isAddressInSnapshot
+	addressReturnData<AddressType, DataType> SnapshotStorage<AddressType, DataType>::isAddressInSnapshot
 	(AddressType at) {
 		auto entry_range = 0;
 		if (pool.empty() || at < pool.front().first)
-			return addressReturnData(false, std::make_tuple(0, 0, 0));
+			return addressReturnData<AddressType, DataType>(false, std::make_tuple(0, 0, 0));
 
 		// if the last entry doesn't have it, then none will:
 		if (at >= pool.back().first) {
@@ -21,13 +22,13 @@ namespace BMMQ {
 			if (at > endAddress)
 				// TODO: Return the index of the last entry, as well as the size of the vector
 				//       For ease of integrating this on ::write()
-				return addressReturnData(false, std::make_tuple(
+				return addressReturnData<AddressType, DataType>(false, std::make_tuple(
 					pool.size(),
 					mem.size(),
 					capacity));
 			else {
 				auto relofs = at - pool.back().first;
-				return addressReturnData(true, std::make_tuple(
+				return addressReturnData<AddressType, DataType>(true, std::make_tuple(
 					pool.size() - 1,
 					relofs,
 					capacity));
@@ -51,7 +52,7 @@ namespace BMMQ {
 			if (at > endAddress)
 				// TODO: Return the index of this entry, as well as the size of the pool
 				//       For ease of integrating this on ::write()
-				return addressReturnData(false, std::make_tuple(
+				return addressReturnData<AddressType, DataType>(false, std::make_tuple(
 					std::distance(pool.begin(), iter_start),
 					0,
 					0));
@@ -62,12 +63,12 @@ namespace BMMQ {
 
 		if (entry_range >= target_offset) {
 			//return addressReturnData(true, &(*iter_start), (iter_start->second + target_offset) == 0);
-			return addressReturnData(true, std::make_tuple(
+			return addressReturnData<AddressType, DataType>(true, std::make_tuple(
 				std::distance(pool.begin(), iter_start),
 				(target_offset),
 				entry_range - (at - iter_start->first) ));
 		}
-		return addressReturnData(false, std::make_tuple(0, 0, 0));
+		return addressReturnData<AddressType, DataType>(false, std::make_tuple(0, 0, 0));
 	}
 
 	template<typename AddressType, typename DataType>
