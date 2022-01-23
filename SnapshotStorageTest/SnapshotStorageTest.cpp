@@ -16,16 +16,20 @@ int main()
     BMMQ::SnapshotStorage<AddressType, DataType> s;
 
     //lets write some data in it
-    DataType* stream = new DataType[5] { 1, 2, 3, 4, 5, };
+    DataType* stream = new DataType[5]{ 1, 2, 3, 4, 5 };
     s.write(stream, 10, 5);
 
     //allocation test: before
-    DataType* newStream = new DataType[5]{ 5, 4, 33, 2, 1, };
+    DataType* newStream = new DataType[5]{ 5, 4, 33, 2, 1 };
     s.write(newStream, 0, 5);
 
     //allocation test: after
-    DataType* newStream2 = new DataType[5]{ 6, 7, 88, 9, 10, };
+    DataType* newStream2 = new DataType[5]{ 6, 7, 88, 9, 10 };
     s.write(newStream2, 15, 5);
+
+    //read test: read all available
+    DataType output[20];
+    s.read(output, 0, 20);
 
     //overwrite test: all
     DataType* newStream3 = new DataType[20];
@@ -35,12 +39,14 @@ int main()
 
     s.write(newStream3, 0, 20);
 
-    DataType output[20];
+    //read test: read all available
     s.read(output, 0, 20);
 
     for (int i = 0; i < 20; i++) {
         std::cout << (int)output[i] << '|';
     }
+
+    // read test: 
     return 0;
 }
 
