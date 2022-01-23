@@ -114,11 +114,6 @@ namespace BMMQ {
 			p = isAddressInSnapshot(index);
 		}
 
-		//for (size_t i = 0; i < count; i++) {
-		//	auto p = isAddressInSnapshot(index++);
-		//	auto info = p.info;
-		//	*streamIterator++ = p.isAddressInSnapshot ? mem[(pool.at(std::get<0>(info)).second) + std::get<1>(info)] : 0;
-		//}
 	}
 
 	template<typename AddressType, typename DataType>
