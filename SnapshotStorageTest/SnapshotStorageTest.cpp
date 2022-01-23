@@ -15,19 +15,19 @@ int main()
     //lets define a snapshotstorage class
     BMMQ::SnapshotStorage<AddressType, DataType> s;
 
-    //lets write some data in it
+    //allocation test: empty container
     DataType* stream = new DataType[5]{ 1, 2, 3, 4, 5 };
     s.write(stream, 10, 5);
 
-    //allocation test: before
+    //allocation test: before prior allocation
     DataType* newStream = new DataType[5]{ 5, 4, 33, 2, 1 };
     s.write(newStream, 0, 5);
 
-    //allocation test: after
+    //allocation test: after prior allocation, appending last entru
     DataType* newStream2 = new DataType[5]{ 6, 7, 88, 9, 10 };
     s.write(newStream2, 15, 5);
 
-    //read test: read all available
+    //read test: read all available, zero if not
     DataType output[20];
     s.read(output, 0, 20);
 
@@ -46,7 +46,6 @@ int main()
         std::cout << (int)output[i] << '|';
     }
 
-    // read test: 
     return 0;
 }
 
