@@ -161,7 +161,7 @@ namespace BMMQ {
 				auto delpoolit = pool.end();
 
 				if (std::get<0>(address_return_info) + 1 != pool.size() )
-					std::advance(delpoolit, std::get<0>(address_return_info) - pool.size());
+					std::advance(delpoolit, std::get<0>(address_return_info) - pool.size() + 1 );
 
 				if (delpoolit == pool.end()) {
 					entrycap = mem.size() - memindex;
