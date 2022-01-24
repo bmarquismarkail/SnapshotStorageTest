@@ -53,6 +53,12 @@ int main()
     std::cout << (int)s[19] << '\n';// should be 100
     std::cout << (int)s[100] << '\n';// should be zero, and a new pool entry is allocated as well as as memory
     
+    // pointer test
+    auto ptr = &s[18];
+    std::cout << (int)*ptr++ << '\n'; // should be 95 (s[18])
+    std::cout << (int)*ptr++ << '\n'; // should be 100 (s[19])
+    std::cout << (int)*ptr++ << '\n'; // should be 0 (s[20])
+    std::cout << (int)*ptr << '\n'; // should be 0, and new allocation (s[21])
     return 0;
 }
 
