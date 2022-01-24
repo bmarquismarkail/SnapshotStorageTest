@@ -13,26 +13,32 @@ namespace BMMQ {
 	addressReturnData<AddressType, DataType> SnapshotStorage<AddressType, DataType>::isAddressInSnapshot
 	(AddressType at) {
 		auto entry_range = 0;
-		if (pool.empty() || at < pool.front().first)
+		auto endAddress = 0;
+		if (pool.empty())
 			return addressReturnData<AddressType, DataType>(false, std::make_tuple(0, 0, 0));
+
+		if (at < pool.front().first) {
+			return addressReturnData<AddressType, DataType>(false, std::make_tuple(0, 0, at - pool.front().first ));
+		}
 
 		// if the last entry doesn't have it, then none will:
 		if (at >= pool.back().first) {
-			auto endAddress = pool.back().first + (mem.size() - pool.back().second) - 1;
-			auto capacity = endAddress - at + 1;
+
+			auto capacity = (mem.size() - pool.back().second);
+			endAddress = pool.back().first +  capacity - 1;
 			if (at > endAddress)
 				// TODO: Return the index of the last entry, as well as the size of the vector
 				//       For ease of integrating this on ::write()
 				return addressReturnData<AddressType, DataType>(false, std::make_tuple(
-					pool.size(),
+					pool.size() - 1,
 					mem.size(),
-					capacity));
+					at - endAddress ));
 			else {
 				auto relofs = at - pool.back().first;
 				return addressReturnData<AddressType, DataType>(true, std::make_tuple(
 					pool.size() - 1,
 					relofs,
-					capacity));
+					capacity - relofs));
 			}
 
 		}
@@ -49,7 +55,7 @@ namespace BMMQ {
 				(std::next(iter_start) == pool.end() ? (mem.size()) : std::next(iter_start)->second)
 				- iter_start->second;
 
-			auto endAddress = iter_start->first + entry_range - 1;
+			endAddress = iter_start->first + entry_range - 1;
 			if (at > endAddress)
 				// TODO: Return the index of this entry, as well as the size of the pool
 				//       For ease of integrating this on ::write()
@@ -61,13 +67,13 @@ namespace BMMQ {
 		}
 
 		entry_range = std::next(iter_start)->second - iter_start->second;
+		endAddress = iter_start->first + entry_range - 1;
 		auto target_offset = at - iter_start->first;
 
-
-		return addressReturnData<AddressType, DataType>((entry_range > target_offset), std::make_tuple(
+		return addressReturnData<AddressType, DataType>((at < endAddress), std::make_tuple(
 			std::distance(pool.begin(), iter_start),
 			(target_offset),
-			entry_range - (at - iter_start->first)));
+			entry_range - target_offset ));
 	}
 
 	template<typename AddressType, typename DataType>
@@ -84,17 +90,16 @@ namespace BMMQ {
 
 		AddressType index = address;
 		auto p = isAddressInSnapshot(index);
-		auto info = p.info;
 		auto poolit = pool.begin();
-		std::advance(poolit, std::get<0>(info));
+		std::advance(poolit, std::get<0>(p.info));
 
 		for (size_t i = 0; i < count; i++) {
 			if (p.isAddressInSnapshot) {
-				auto entrycap = std::get<2>(info);
+				auto entrycap = std::get<2>(p.info);
 				if (entrycap > count)
 					entrycap = count;
 
-				std::advance(memit, poolit->second + std::get<1>(info));
+				std::advance(memit, poolit->second + std::get<1>(p.info));
 				std::for_each_n(streamIterator, entrycap, [&memit](auto& s) {s = *memit; memit++; });
 				streamIterator += entrycap;
 				index += entrycap;
@@ -142,12 +147,9 @@ namespace BMMQ {
 		auto entrycap = std::get<2>(info);
 		if (!p.isAddressInSnapshot) {
 			memindex = std::get<1>(info);
-			if (entrycap == -1) {
-				std::advance(poolit, pool_index - 1);
-			}
-			else {
-				std::advance(poolit, pool_index);
-				poolit = pool.insert(poolit, std::make_pair(address, memindex));
+			std::advance(poolit, pool_index);
+			if (std::abs(entrycap) != 1 ) {
+				poolit = pool.insert(( (entrycap < 0) ? poolit : std::next(poolit)), std::make_pair(address, memindex));
 			}
 			std::for_each(std::next(poolit), pool.end(), [&new_alloc_len](auto& pe) {pe.second += new_alloc_len; });
 		}
@@ -160,8 +162,8 @@ namespace BMMQ {
 				auto address_return_info = address_return_data.info;
 				auto delpoolit = pool.end();
 
-				if (std::get<0>(address_return_info) + 1 != pool.size() )
-					std::advance(delpoolit, std::get<0>(address_return_info) - pool.size() + 1 );
+				if (std::get<0>(address_return_info) + 1 != pool.size())
+					std::advance(delpoolit, std::get<0>(address_return_info) - pool.size() + 1);
 
 				if (delpoolit == pool.end()) {
 					entrycap = mem.size() - memindex;
@@ -196,17 +198,75 @@ namespace BMMQ {
 		auto poolit = pool.begin();
 		auto memindex = std::get<1>(p.info);
 		auto pool_index = std::get<0>(p.info);
-		if (std::get<2>(p.info) == -1) {
-			std::advance(poolit, pool_index - 1);
+		std::advance(poolit, pool_index);
+		if (std::abs(std::get<2>(p.info)) != 1) {
+			poolit = pool.insert(((std::get<2>(p.info) < 0) ? poolit : std::next(poolit)), std::make_pair(idx, memindex));
 		}
-		else {
-			std::advance(poolit, pool_index);
-			poolit = pool.insert(poolit, std::make_pair(idx, memindex));
+		if (std::next(poolit) != pool.end() && std::get<1>(p.info) + std::get<2>(p.info) == std::next(poolit)->first) {
+			pool.erase(std::next(poolit));
 		}
 		std::for_each(std::next(poolit), pool.end(), [](auto& pe) {pe.second++; });
 		auto memit = mem.begin();
 		std::advance(memit, memindex);
 		memit = mem.insert(memit, 0);
 		return *memit;
+	}
+
+	template<typename AddressType, typename DataType>
+	SnapshotStorage<AddressType, DataType>::iterator::iterator(SnapshotStorage* p)
+		:parent(p) {
+		address = 0;
+	}
+
+	template<typename AddressType, typename DataType>
+	SnapshotStorage<AddressType, DataType>::iterator::iterator(AddressType a, SnapshotStorage* p)
+		:address(a), parent(p) {
+	}
+
+	template<typename AddressType, typename DataType>
+	DataType& SnapshotStorage<AddressType, DataType>::iterator::operator*() { return (*parent)[address]; }
+
+	template<typename AddressType, typename DataType>
+	DataType* SnapshotStorage<AddressType, DataType>::iterator::operator&() { return &(*parent)[address]; }
+
+	template<typename AddressType, typename DataType>
+	typename SnapshotStorage<AddressType, DataType>::iterator& SnapshotStorage<AddressType, DataType>::iterator::operator++() {
+		address++;
+		return *this;
+	}
+
+	template<typename AddressType, typename DataType>
+	typename SnapshotStorage<AddressType, DataType>::iterator SnapshotStorage<AddressType, DataType>::iterator::operator++(int) {
+		iterator tmp = *this;
+		++(*this);
+		return tmp;
+	}
+
+	template<typename AddressType, typename DataType>
+	typename SnapshotStorage<AddressType, DataType>::iterator SnapshotStorage<AddressType, DataType>::iterator::end() {
+		auto lastAddress = parent->pool.back().first + (parent->mem.size() - parent->pool.back().second);
+		address = lastAddress;
+		return *this;
+	}
+
+	template<typename AddressType, typename DataType>
+	bool SnapshotStorage<AddressType, DataType>::iterator::operator== (const typename SnapshotStorage<AddressType, DataType>::iterator& rhs) {
+		return (address == rhs.address);
+	}
+
+	template<typename AddressType, typename DataType>
+	bool SnapshotStorage<AddressType, DataType>::iterator::operator!= (const typename SnapshotStorage<AddressType, DataType>::iterator& rhs) {
+		return (address != rhs.address);
+	}
+
+	template<typename AddressType, typename DataType>
+	typename SnapshotStorage<AddressType, DataType>::iterator SnapshotStorage<AddressType, DataType>::begin() {
+		return iterator(0, this);
+	}
+
+	template<typename AddressType, typename DataType>
+	typename SnapshotStorage<AddressType, DataType>::iterator SnapshotStorage<AddressType, DataType>::end() {
+		iterator endit(this);
+		return endit.end();
 	}
 }

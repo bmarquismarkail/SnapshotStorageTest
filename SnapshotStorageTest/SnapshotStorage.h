@@ -39,6 +39,31 @@ namespace BMMQ {
 		// returns a reference to the data being accessed
 		// if there are no data in address idx, it will add the address to the container and return 0
 		DataType& operator[](AddressType idx);
+
+		//create a custom iterator
+		struct iterator {
+			iterator(SnapshotStorage* s);
+			iterator(AddressType a, SnapshotStorage* p);
+			DataType& operator*();
+			DataType* operator&();
+
+			iterator& operator++();
+
+			iterator operator++(int);
+
+			//special function to get end
+			iterator end();
+
+			bool operator== (const iterator& rhs);
+			bool operator!= (const iterator& rhs);
+		private:
+			SnapshotStorage* parent;
+			AddressType address;
+				
+		};
+
+		iterator begin();
+		iterator end();
 	};
 
 }
