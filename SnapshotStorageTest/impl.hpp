@@ -185,4 +185,28 @@ namespace BMMQ {
 		std::for_each_n(memit, count - new_alloc_len, [&stream](auto& d) {d = *stream++; });
 		return;
 	}
+
+	// because the [] operator may be used for write access, idx might need to be allocated
+	template<typename AddressType, typename DataType>
+	DataType& SnapshotStorage<AddressType, DataType>::operator[](AddressType idx) {
+		auto p = isAddressInSnapshot(idx);
+		if (p.isAddressInSnapshot)
+			return mem[pool.at(std::get<0>(p.info)).second + std::get<1>(p.info)];
+
+		auto poolit = pool.begin();
+		auto memindex = std::get<1>(p.info);
+		auto pool_index = std::get<0>(p.info);
+		if (std::get<2>(p.info) == -1) {
+			std::advance(poolit, pool_index - 1);
+		}
+		else {
+			std::advance(poolit, pool_index);
+			poolit = pool.insert(poolit, std::make_pair(idx, memindex));
+		}
+		std::for_each(std::next(poolit), pool.end(), [](auto& pe) {pe.second++; });
+		auto memit = mem.begin();
+		std::advance(memit, memindex);
+		memit = mem.insert(memit, 0);
+		return *memit;
+	}
 }

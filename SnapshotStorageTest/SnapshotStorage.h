@@ -35,6 +35,10 @@ namespace BMMQ {
 	public:
 		void read(DataType* stream, AddressType address, AddressType count);
 		void write(DataType* stream, AddressType address, AddressType count);
+
+		// returns a reference to the data being accessed
+		// if there's no data in address idx, it will add the address to the container and return 0
+		DataType& operator[](AddressType idx);
 	};
 
 }
