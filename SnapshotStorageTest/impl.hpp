@@ -47,10 +47,10 @@ namespace BMMQ {
 				(std::next(iter_start) == pool.end() ? (mem.size()) : std::next(iter_start)->second)
 				- iter_start->second;
 
+			isAddressInSnapshot = (at < (iter_start->first + entry_size));
 			entry_idx = std::distance(pool.begin(), iter_start);
-			relofs = at - iter_start->first;
-			rellength = entry_size - relofs;
-			isAddressInSnapshot = (at <= (entry_size - 1));
+			relofs = isAddressInSnapshot ? at - iter_start->first : mem.size();
+			rellength = isAddressInSnapshot ? entry_size - relofs : relofs;
 		}
 
 		// TODO: Return the index of this entry, as well as the size of the pool

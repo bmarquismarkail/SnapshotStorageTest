@@ -56,10 +56,10 @@ int main()
 
     //iterator test
     for (auto i = s.begin(); i != s.end(); ++i) {
-        std::cout << (int)*i;
+        std::cout << (int)*i << '|' ;
     }
     std::cout << std::endl;
-    std::for_each(s.begin(), s.end(), [](auto& s) {std::cout << (int)s; });
+    std::for_each(s.begin(), s.end(), [](auto& s) {std::cout << (int)s << '|'; });
     std::cout << std::endl;
     return 0;
 }
