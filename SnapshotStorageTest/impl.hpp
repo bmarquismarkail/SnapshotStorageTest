@@ -68,7 +68,6 @@ namespace BMMQ {
 		if (count == 0) return;
 
 		DataType* streamIterator = stream;
-		auto memit = mem.begin();
 
 		AddressType index = address;
 		auto p = isAddressInSnapshot(index);
@@ -81,6 +80,7 @@ namespace BMMQ {
 				if (entrycap > count)
 					entrycap = count;
 
+				auto memit = mem.begin();
 				std::advance(memit, poolit->second + std::get<1>(p.info));
 				std::for_each_n(streamIterator, entrycap, [&memit](auto& s) {s = *memit; memit++; });
 				streamIterator += entrycap;
