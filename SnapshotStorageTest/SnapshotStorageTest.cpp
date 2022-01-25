@@ -59,6 +59,8 @@ int main()
         std::cout << (int)*i;
     }
     std::cout << std::endl;
+    std::for_each(s.begin(), s.end(), [](auto& s) {std::cout << (int)s; });
+    std::cout << std::endl;
     return 0;
 }
 
