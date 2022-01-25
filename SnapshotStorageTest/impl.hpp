@@ -41,7 +41,7 @@ namespace BMMQ {
 		// so all we need to do is check adjacent elements
 		else {
 
-			auto iter_start = std::find_if_not(pool.begin(), std::prev(pool.end()), [&at](auto pe) {return at < pe.first; });
+			auto iter_start = std::prev(std::find_if(std::next(pool.begin()), std::prev(pool.end()), [&at](auto pe) {return at < pe.first; }));
 
 			auto entry_size =
 				(std::next(iter_start) == pool.end() ? (mem.size()) : std::next(iter_start)->second)
@@ -70,11 +70,11 @@ namespace BMMQ {
 		DataType* streamIterator = stream;
 
 		AddressType index = address;
-		auto p = isAddressInSnapshot(index);
-		auto poolit = pool.begin();
-		std::advance(poolit, std::get<0>(p.info));
 
-		for (size_t i = 0; i < count; i++) {
+		while  (count > 0) {
+			auto p = isAddressInSnapshot(index);
+			auto poolit = pool.begin();
+			std::advance(poolit, std::get<0>(p.info));
 			if (p.isAddressInSnapshot) {
 				auto entrycap = std::get<2>(p.info);
 				if (entrycap > count)
@@ -98,7 +98,6 @@ namespace BMMQ {
 				index += zerocount;
 				count -= zerocount;
 			}
-			p = isAddressInSnapshot(index);
 		}
 
 	}
