@@ -12,68 +12,50 @@ namespace BMMQ {
 	template<typename AddressType, typename DataType>
 	addressReturnData<AddressType, DataType> SnapshotStorage<AddressType, DataType>::isAddressInSnapshot
 	(AddressType at) {
-		auto entry_range = 0;
-		auto endAddress = 0;
-		if (pool.empty())
-			return addressReturnData<AddressType, DataType>(false, std::make_tuple(0, 0, 0));
-
-		if (at < pool.front().first) {
-			return addressReturnData<AddressType, DataType>(false, std::make_tuple(0, 0, at - pool.front().first ));
+		bool isAddressInSnapshot = false;
+		auto entry_idx = 0;
+		auto relofs = 0;
+		auto rellength = 0;
+		if (pool.empty());
+		else if (at < pool.front().first) {
+			rellength = at - pool.front().first;
 		}
-
 		// if the last entry doesn't have it, then none will:
-		if (at >= pool.back().first) {
-
+		else if (at >= pool.back().first) {
 			auto capacity = (mem.size() - pool.back().second);
-			endAddress = pool.back().first +  capacity - 1;
-			if (at > endAddress)
-				// TODO: Return the index of the last entry, as well as the size of the vector
-				//       For ease of integrating this on ::write()
-				return addressReturnData<AddressType, DataType>(false, std::make_tuple(
-					pool.size() - 1,
-					mem.size(),
-					at - endAddress ));
+			if (at > pool.back().first + capacity - 1) {
+				entry_idx = pool.size() - 1;
+				relofs = mem.size();
+				rellength = at - relofs;
+			}
 			else {
-				auto relofs = at - pool.back().first;
-				return addressReturnData<AddressType, DataType>(true, std::make_tuple(
-					pool.size() - 1,
-					relofs,
-					capacity - relofs));
+				isAddressInSnapshot = true;
+				entry_idx = pool.size() - 1;
+				relofs = at - pool.back().first;
+				rellength = capacity - relofs;
 			}
 
 		}
 		// find the pair closest to but not past at
 		// the read and write functions will sort if necessary
 		// so all we need to do is check adjacent elements
-		auto iter_start = pool.begin();
-		for (; std::next(iter_start) != std::prev(pool.end()); ++iter_start) {
-			auto nextpoolentry = std::next(iter_start);
-			if (at >= nextpoolentry->first)
-				continue;
+		else {
 
-			entry_range =
+			auto iter_start = std::find_if_not(pool.begin(), std::prev(pool.end()), [&at](auto pe) {return at < pe.first; });
+
+			auto entry_size =
 				(std::next(iter_start) == pool.end() ? (mem.size()) : std::next(iter_start)->second)
 				- iter_start->second;
 
-			endAddress = iter_start->first + entry_range - 1;
-			if (at > endAddress)
-				// TODO: Return the index of this entry, as well as the size of the pool
-				//       For ease of integrating this on ::write()
-				return addressReturnData<AddressType, DataType>(false, std::make_tuple(
-					std::distance(pool.begin(), iter_start),
-					0,
-					0));
-			else break;
+			entry_idx = std::distance(pool.begin(), iter_start);
+			relofs = at - iter_start->first;
+			rellength = entry_size - relofs;
+			isAddressInSnapshot = (at <= (entry_size - 1));
 		}
 
-		entry_range = std::next(iter_start)->second - iter_start->second;
-		endAddress = iter_start->first + entry_range - 1;
-		auto target_offset = at - iter_start->first;
-
-		return addressReturnData<AddressType, DataType>((at < endAddress), std::make_tuple(
-			std::distance(pool.begin(), iter_start),
-			(target_offset),
-			entry_range - target_offset ));
+		// TODO: Return the index of this entry, as well as the size of the pool
+		//       For ease of integrating this on ::write()
+		return addressReturnData<AddressType, DataType>(isAddressInSnapshot, std::make_tuple(entry_idx, relofs, rellength));
 	}
 
 	template<typename AddressType, typename DataType>
@@ -148,8 +130,8 @@ namespace BMMQ {
 		if (!p.isAddressInSnapshot) {
 			memindex = std::get<1>(info);
 			std::advance(poolit, pool_index);
-			if (std::abs(entrycap) != 1 ) {
-				poolit = pool.insert(( (entrycap < 0) ? poolit : std::next(poolit)), std::make_pair(address, memindex));
+			if (std::abs(entrycap) != 1) {
+				poolit = pool.insert(((entrycap < 0) ? poolit : std::next(poolit)), std::make_pair(address, memindex));
 			}
 			std::for_each(std::next(poolit), pool.end(), [&new_alloc_len](auto& pe) {pe.second += new_alloc_len; });
 		}
@@ -220,7 +202,7 @@ namespace BMMQ {
 
 	template<typename AddressType, typename DataType>
 	SnapshotStorage<AddressType, DataType>::iterator::iterator(AddressType a, SnapshotStorage* p)
-		:address(a), parent(p) {
+		: address(a), parent(p) {
 	}
 
 	template<typename AddressType, typename DataType>

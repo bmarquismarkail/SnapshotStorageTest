@@ -17,7 +17,7 @@ namespace BMMQ {
 	template<typename A, typename D>
 	struct addressReturnData {
 		bool isAddressInSnapshot;
-		// info
+
 		// a tuple that houses:
 		// 1, the pool index of the address,
 		// 2, the offset where the data resides relative to the pool's absolute offset
