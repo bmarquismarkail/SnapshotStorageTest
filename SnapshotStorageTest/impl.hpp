@@ -23,15 +23,16 @@ namespace BMMQ {
 		// if the last entry doesn't have it, then none will:
 		else if (at >= pool.back().first) {
 			auto capacity = (mem.size() - pool.back().second);
-			if (at < pool.back().first + capacity - 1) {
+			if (at < pool.back().first + capacity) {
 				isAddressInSnapshot = true;
 				relofs = at - pool.back().first;
+				rellength = capacity - relofs;
 			}
 			else {
 				relofs = capacity;
+				rellength = at - (pool.back().first + capacity - 1);
 			}
 			entry_idx = pool.size() - 1;
-			rellength = capacity - relofs;
 
 		}
 		// find the pair closest to but not past at
@@ -47,8 +48,14 @@ namespace BMMQ {
 
 			isAddressInSnapshot = (at < (iter_start->first + entry_size));
 			entry_idx = std::distance(pool.begin(), iter_start);
-			relofs = at - iter_start->first;
-			rellength = entry_size - relofs;
+			if (isAddressInSnapshot) {
+				relofs = at - iter_start->first;
+				rellength = entry_size - relofs;
+			}
+			else {
+				relofs = entry_size;
+				rellength = at - (iter_start->first + entry_size - 1);
+			}
 		}
 
 		return addressReturnData<AddressType, DataType>(isAddressInSnapshot, std::make_tuple(entry_idx, relofs, rellength));
