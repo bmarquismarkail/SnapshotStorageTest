@@ -51,8 +51,6 @@ namespace BMMQ {
 			rellength = entry_size - relofs;
 		}
 
-		// TODO: Return the index of this entry, as well as the size of the pool
-		//       For ease of integrating this on ::write()
 		return addressReturnData<AddressType, DataType>(isAddressInSnapshot, std::make_tuple(entry_idx, relofs, rellength));
 	}
 
@@ -66,7 +64,6 @@ namespace BMMQ {
 		if (count == 0) return;
 
 		DataType* streamIterator = stream;
-
 		AddressType index = address;
 
 		while (count > 0) {
@@ -167,7 +164,6 @@ namespace BMMQ {
 		return;
 	}
 
-	// because the [] operator may be used for write access, idx might need to be allocated
 	template<typename AddressType, typename DataType>
 	DataType& SnapshotStorage<AddressType, DataType>::operator[](AddressType idx) {
 		auto p = isAddressInSnapshot(idx);
