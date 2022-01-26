@@ -23,17 +23,15 @@ namespace BMMQ {
 		// if the last entry doesn't have it, then none will:
 		else if (at >= pool.back().first) {
 			auto capacity = (mem.size() - pool.back().second);
-			if (at > pool.back().first + capacity - 1) {
-				entry_idx = pool.size() - 1;
-				relofs = mem.size();
-				rellength = at - relofs;
+			if (at < pool.back().first + capacity - 1) {
+				isAddressInSnapshot = true;
+				relofs = at - pool.back().first;
 			}
 			else {
-				isAddressInSnapshot = true;
-				entry_idx = pool.size() - 1;
-				relofs = at - pool.back().first;
-				rellength = capacity - relofs;
+				relofs = capacity;
 			}
+			entry_idx = pool.size() - 1;
+			rellength = capacity - relofs;
 
 		}
 		// find the pair closest to but not past at
@@ -49,8 +47,8 @@ namespace BMMQ {
 
 			isAddressInSnapshot = (at < (iter_start->first + entry_size));
 			entry_idx = std::distance(pool.begin(), iter_start);
-			relofs = isAddressInSnapshot ? at - iter_start->first : mem.size();
-			rellength = isAddressInSnapshot ? entry_size - relofs : relofs;
+			relofs = at - iter_start->first;
+			rellength = entry_size - relofs;
 		}
 
 		// TODO: Return the index of this entry, as well as the size of the pool
@@ -71,7 +69,7 @@ namespace BMMQ {
 
 		AddressType index = address;
 
-		while  (count > 0) {
+		while (count > 0) {
 			auto p = isAddressInSnapshot(index);
 			auto poolit = pool.begin();
 			std::advance(poolit, std::get<0>(p.info));
@@ -126,8 +124,8 @@ namespace BMMQ {
 		auto new_alloc_len = count;
 		auto pool_index = std::get<0>(info);
 		auto entrycap = std::get<2>(info);
+		memindex = pool.at(pool_index).second + std::get<1>(info);
 		if (!p.isAddressInSnapshot) {
-			memindex = std::get<1>(info);
 			std::advance(poolit, pool_index);
 			if (std::abs(entrycap) != 1) {
 				poolit = pool.insert(((entrycap < 0) ? poolit : std::next(poolit)), std::make_pair(address, memindex));
@@ -173,12 +171,13 @@ namespace BMMQ {
 	template<typename AddressType, typename DataType>
 	DataType& SnapshotStorage<AddressType, DataType>::operator[](AddressType idx) {
 		auto p = isAddressInSnapshot(idx);
+		auto memindex = pool.at(std::get<0>(p.info)).second + std::get<1>(p.info);
 		if (p.isAddressInSnapshot)
-			return mem[pool.at(std::get<0>(p.info)).second + std::get<1>(p.info)];
+			return mem[memindex];
 
-		auto poolit = pool.begin();
-		auto memindex = std::get<1>(p.info);
+		
 		auto pool_index = std::get<0>(p.info);
+		auto poolit = pool.begin();
 		std::advance(poolit, pool_index);
 		if (std::abs(std::get<2>(p.info)) != 1) {
 			poolit = pool.insert(((std::get<2>(p.info) < 0) ? poolit : std::next(poolit)), std::make_pair(idx, memindex));
