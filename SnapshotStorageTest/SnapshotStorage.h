@@ -42,11 +42,11 @@ namespace BMMQ {
 		class Accessor {
 			AddressType address;
 			SnapshotStorage* parent;
-			DataType def;
+			static DataType def;
 		public:
 			Accessor(SnapshotStorage* p, AddressType a);
 			DataType& operator()();
-			DataType& operator=(const AddressType& rhs);
+			DataType& operator=(const DataType& rhs);
 			operator DataType();
 
 		};

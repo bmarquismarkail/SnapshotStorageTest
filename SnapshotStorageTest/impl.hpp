@@ -5,6 +5,9 @@
 
 namespace BMMQ {
 
+	template<typename AddressType, typename DataType>
+	DataType SnapshotStorage<AddressType, DataType>::Accessor::def;
+
 	template<typename A, typename D>
 	addressReturnData<A, D>::addressReturnData(bool retFlag, std::tuple< poolsizetype<A>, memindextype<D>, memindextype<D>> info)
 		: isAddressInSnapshot(retFlag), info(info) {}
@@ -260,7 +263,7 @@ namespace BMMQ {
 
 	template<typename AddressType, typename DataType>
 	SnapshotStorage<AddressType, DataType>::Accessor::Accessor(SnapshotStorage* p, AddressType a)
-		:parent(p), address(a), def(0) {
+		:parent(p), address(a) {
 	}
 
 	template<typename AddressType, typename DataType>
@@ -273,7 +276,7 @@ namespace BMMQ {
 	}
 
 	template<typename AddressType, typename DataType>
-	DataType& SnapshotStorage<AddressType, DataType>::Accessor::operator=(const AddressType& rhs) {
+	DataType& SnapshotStorage<AddressType, DataType>::Accessor::operator=(const DataType& rhs) {
 		(*parent).at(address) = rhs;
 		return (*parent).at(address);
 	}
