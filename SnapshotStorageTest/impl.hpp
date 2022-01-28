@@ -172,13 +172,12 @@ namespace BMMQ {
 	}
 
 	template<typename AddressType, typename DataType>
-	DataType& SnapshotStorage<AddressType, DataType>::operator[](AddressType idx) {
+	DataType& SnapshotStorage<AddressType, DataType>::at(AddressType idx) {
 		auto p = isAddressInSnapshot(idx);
 		auto memindex = pool.at(std::get<0>(p.info)).second + std::get<1>(p.info);
 		if (p.isAddressInSnapshot)
 			return mem[memindex];
 
-		
 		auto pool_index = std::get<0>(p.info);
 		auto poolit = pool.begin();
 		std::advance(poolit, pool_index);
@@ -196,6 +195,12 @@ namespace BMMQ {
 	}
 
 	template<typename AddressType, typename DataType>
+	typename SnapshotStorage<AddressType, DataType>::Accessor SnapshotStorage<AddressType, DataType>::operator[](AddressType idx) {
+
+		return Accessor(this, idx);
+	}
+
+	template<typename AddressType, typename DataType>
 	SnapshotStorage<AddressType, DataType>::iterator::iterator(SnapshotStorage* p)
 		:parent(p) {
 		address = 0;
@@ -207,10 +212,10 @@ namespace BMMQ {
 	}
 
 	template<typename AddressType, typename DataType>
-	DataType& SnapshotStorage<AddressType, DataType>::iterator::operator*() { return (*parent)[address]; }
+	DataType& SnapshotStorage<AddressType, DataType>::iterator::operator*() { return (*parent)[address](); }
 
 	template<typename AddressType, typename DataType>
-	DataType* SnapshotStorage<AddressType, DataType>::iterator::operator&() { return &(*parent)[address]; }
+	DataType* SnapshotStorage<AddressType, DataType>::iterator::operator&() { return &(*parent)[address](); }
 
 	template<typename AddressType, typename DataType>
 	typename SnapshotStorage<AddressType, DataType>::iterator& SnapshotStorage<AddressType, DataType>::iterator::operator++() {
@@ -251,5 +256,30 @@ namespace BMMQ {
 	typename SnapshotStorage<AddressType, DataType>::iterator SnapshotStorage<AddressType, DataType>::end() {
 		iterator endit(this);
 		return endit.end();
+	}
+
+	template<typename AddressType, typename DataType>
+	SnapshotStorage<AddressType, DataType>::Accessor::Accessor(SnapshotStorage* p, AddressType a)
+		:parent(p), address(a), def(0) {
+	}
+
+	template<typename AddressType, typename DataType>
+	DataType& SnapshotStorage<AddressType, DataType>::Accessor::operator()() {
+		auto p = (*parent).isAddressInSnapshot(address);
+		if (p.isAddressInSnapshot) {
+			return (*parent).at(address);
+		}
+		else return def;
+	}
+
+	template<typename AddressType, typename DataType>
+	DataType& SnapshotStorage<AddressType, DataType>::Accessor::operator=(const AddressType& rhs) {
+		(*parent).at(address) = rhs;
+		return (*parent).at(address);
+	}
+
+	template<typename AddressType, typename DataType>
+	SnapshotStorage<AddressType, DataType>::Accessor::operator DataType() {
+		return this->operator()();
 	}
 }

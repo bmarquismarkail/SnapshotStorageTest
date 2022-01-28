@@ -26,7 +26,6 @@ namespace BMMQ {
 		addressReturnData(bool retFlag, std::tuple< poolsizetype<A>, memindextype<D>, memindextype<D>> info);
 	};
 
-
 	template<typename AddressType, typename DataType>
 	class SnapshotStorage {
 		std::vector< std::pair< AddressType, std::size_t>> pool;
@@ -35,10 +34,28 @@ namespace BMMQ {
 	public:
 		void read(DataType* stream, AddressType address, AddressType count);
 		void write(DataType* stream, AddressType address, AddressType count);
+		DataType& at(AddressType idx);
+
+		// class for reading and writing
+		// This class will be used as a middleman to prevent allocation when none is needed
+		
+		class Accessor {
+			AddressType address;
+			SnapshotStorage* parent;
+			DataType def;
+		public:
+			Accessor(SnapshotStorage* p, AddressType a);
+			DataType& operator()();
+			DataType& operator=(const AddressType& rhs);
+			operator DataType();
+
+		};
+
 
 		// returns a reference to the data being accessed
 		// if there are no data in address idx, it will add the address to the container and return 0
-		DataType& operator[](AddressType idx);
+
+		Accessor operator[](AddressType idx);
 
 		//create a custom iterator
 		struct iterator {
