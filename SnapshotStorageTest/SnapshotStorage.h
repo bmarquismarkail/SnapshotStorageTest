@@ -45,9 +45,8 @@ namespace BMMQ {
 			static DataType def;
 		public:
 			Accessor(SnapshotStorage* p, AddressType a);
-			DataType& operator()();
 			DataType& operator=(const DataType& rhs);
-			operator DataType();
+			operator DataType&();
 
 		};
 

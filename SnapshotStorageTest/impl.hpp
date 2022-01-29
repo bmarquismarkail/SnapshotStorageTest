@@ -215,10 +215,10 @@ namespace BMMQ {
 	}
 
 	template<typename AddressType, typename DataType>
-	DataType& SnapshotStorage<AddressType, DataType>::iterator::operator*() { return (*parent)[address](); }
+	DataType& SnapshotStorage<AddressType, DataType>::iterator::operator*() { return (*parent)[address]; }
 
 	template<typename AddressType, typename DataType>
-	DataType* SnapshotStorage<AddressType, DataType>::iterator::operator&() { return &(*parent)[address](); }
+	DataType* SnapshotStorage<AddressType, DataType>::iterator::operator&() { return &(*parent)[address]; }
 
 	template<typename AddressType, typename DataType>
 	typename SnapshotStorage<AddressType, DataType>::iterator& SnapshotStorage<AddressType, DataType>::iterator::operator++() {
@@ -267,22 +267,17 @@ namespace BMMQ {
 	}
 
 	template<typename AddressType, typename DataType>
-	DataType& SnapshotStorage<AddressType, DataType>::Accessor::operator()() {
-		auto p = (*parent).isAddressInSnapshot(address);
-		if (p.isAddressInSnapshot) {
-			return (*parent).at(address);
-		}
-		else return def;
-	}
-
-	template<typename AddressType, typename DataType>
 	DataType& SnapshotStorage<AddressType, DataType>::Accessor::operator=(const DataType& rhs) {
 		(*parent).at(address) = rhs;
 		return (*parent).at(address);
 	}
 
 	template<typename AddressType, typename DataType>
-	SnapshotStorage<AddressType, DataType>::Accessor::operator DataType() {
-		return this->operator()();
+	SnapshotStorage<AddressType, DataType>::Accessor::operator DataType&() {
+		auto p = (*parent).isAddressInSnapshot(address);
+		if (p.isAddressInSnapshot) {
+			return (*parent).at(address);
+		}
+		else return def;
 	}
 }
