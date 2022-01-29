@@ -48,7 +48,7 @@ int main()
     std::cout << (int)s[20] << '\n';// should be zero, and allocation occurs on mem
     std::cout << (int)s[19] << '\n';// should be 100
     s[100] = 1;
-    std::cout << (int)s[100] << '\n';// should be zero, and a new pool entry is allocated as well as as memory
+    std::cout << (int)s[100] << '\n';// should be 1, and a new pool entry is allocated as well as as memory
 
 
     //iterator test
