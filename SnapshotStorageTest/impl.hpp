@@ -73,6 +73,8 @@ namespace BMMQ {
 		count = std::min(bounds, count);
 		if (count == 0) return;
 
+		AddressType endAddress = address + count;
+		maxAccessed = std::max(maxAccessed, endAddress);
 		DataType* streamIterator = stream;
 		AddressType index = address;
 
@@ -116,6 +118,8 @@ namespace BMMQ {
 		count = std::min(bounds, count);
 		if (count == 0) return;
 
+		AddressType endAddress = address + count;
+		maxAccessed = std::max(maxAccessed, endAddress);
 		auto memit = mem.begin();
 		auto poolit = pool.begin();
 		auto memindex = 0;
@@ -199,7 +203,7 @@ namespace BMMQ {
 
 	template<typename AddressType, typename DataType>
 	typename SnapshotStorage<AddressType, DataType>::proxy SnapshotStorage<AddressType, DataType>::operator[](AddressType idx) {
-
+		maxAccessed = std::max(maxAccessed, idx);
 		return proxy(this, idx);
 	}
 
@@ -235,7 +239,7 @@ namespace BMMQ {
 
 	template<typename AddressType, typename DataType>
 	typename SnapshotStorage<AddressType, DataType>::iterator SnapshotStorage<AddressType, DataType>::iterator::end() {
-		auto lastAddress = parent->pool.back().first + (parent->mem.size() - parent->pool.back().second);
+		auto lastAddress = (*parent).maxAccessed + 1;
 		address = lastAddress;
 		return *this;
 	}

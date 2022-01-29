@@ -31,6 +31,7 @@ namespace BMMQ {
 		std::vector< std::pair< AddressType, std::size_t>> pool;
 		std::vector<DataType> mem;
 		addressReturnData<AddressType, DataType> isAddressInSnapshot(AddressType at);
+		AddressType maxAccessed;
 	public:
 		void read(DataType* stream, AddressType address, AddressType count);
 		void write(DataType* stream, AddressType address, AddressType count);
