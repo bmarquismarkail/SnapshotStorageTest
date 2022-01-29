@@ -6,7 +6,7 @@
 namespace BMMQ {
 
 	template<typename AddressType, typename DataType>
-	DataType SnapshotStorage<AddressType, DataType>::Accessor::def;
+	DataType SnapshotStorage<AddressType, DataType>::proxy::def;
 
 	template<typename A, typename D>
 	addressReturnData<A, D>::addressReturnData(bool retFlag, std::tuple< poolsizetype<A>, memindextype<D>, memindextype<D>> info)
@@ -198,9 +198,9 @@ namespace BMMQ {
 	}
 
 	template<typename AddressType, typename DataType>
-	typename SnapshotStorage<AddressType, DataType>::Accessor SnapshotStorage<AddressType, DataType>::operator[](AddressType idx) {
+	typename SnapshotStorage<AddressType, DataType>::proxy SnapshotStorage<AddressType, DataType>::operator[](AddressType idx) {
 
-		return Accessor(this, idx);
+		return proxy(this, idx);
 	}
 
 	template<typename AddressType, typename DataType>
@@ -262,18 +262,18 @@ namespace BMMQ {
 	}
 
 	template<typename AddressType, typename DataType>
-	SnapshotStorage<AddressType, DataType>::Accessor::Accessor(SnapshotStorage* p, AddressType a)
+	SnapshotStorage<AddressType, DataType>::proxy::proxy(SnapshotStorage* p, AddressType a)
 		:parent(p), address(a) {
 	}
 
 	template<typename AddressType, typename DataType>
-	DataType& SnapshotStorage<AddressType, DataType>::Accessor::operator=(const DataType& rhs) {
+	DataType& SnapshotStorage<AddressType, DataType>::proxy::operator=(const DataType& rhs) {
 		(*parent).at(address) = rhs;
 		return (*parent).at(address);
 	}
 
 	template<typename AddressType, typename DataType>
-	SnapshotStorage<AddressType, DataType>::Accessor::operator DataType&() {
+	SnapshotStorage<AddressType, DataType>::proxy::operator DataType&() {
 		auto p = (*parent).isAddressInSnapshot(address);
 		if (p.isAddressInSnapshot) {
 			return (*parent).at(address);

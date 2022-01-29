@@ -39,12 +39,12 @@ namespace BMMQ {
 		// class for reading and writing
 		// This class will be used as a middleman to prevent allocation when none is needed
 		
-		class Accessor {
+		class proxy {
 			AddressType address;
 			SnapshotStorage* parent;
 			static DataType def;
 		public:
-			Accessor(SnapshotStorage* p, AddressType a);
+			proxy(SnapshotStorage* p, AddressType a);
 			DataType& operator=(const DataType& rhs);
 			operator DataType&();
 
@@ -54,7 +54,7 @@ namespace BMMQ {
 		// returns a reference to the data being accessed
 		// if there are no data in address idx, it will add the address to the container and return 0
 
-		Accessor operator[](AddressType idx);
+		proxy operator[](AddressType idx);
 
 		//create a custom iterator
 		struct iterator {
