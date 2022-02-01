@@ -13,7 +13,7 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\subclass">
+    <Filter Include="Header Files\impl">
       <UniqueIdentifier>{af549d59-9817-47c3-acaf-fe7a916e1a3b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -26,14 +26,14 @@
     <ClInclude Include="SnapshotStorage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SnapshotStorage.hpp">
+    <ClInclude Include="SnapshotStorage.impl.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Proxy.hpp">
-      <Filter>Header Files\subclass</Filter>
+      <Filter>Header Files\impl</Filter>
     </ClInclude>
     <ClInclude Include="Iterator.hpp">
-      <Filter>Header Files\subclass</Filter>
+      <Filter>Header Files\impl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

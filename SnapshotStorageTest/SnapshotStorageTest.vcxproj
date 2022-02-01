@@ -148,7 +148,7 @@
   <ItemGroup>
     <ClInclude Include="Iterator.hpp" />
     <ClInclude Include="Proxy.hpp" />
-    <ClInclude Include="SnapshotStorage.hpp" />
+    <ClInclude Include="SnapshotStorage.impl.hpp" />
     <ClInclude Include="SnapshotStorage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
