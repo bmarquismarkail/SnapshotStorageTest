@@ -5,8 +5,7 @@
 
 namespace BMMQ {
 
-	template<typename AddressType, typename DataType>
-	DataType SnapshotStorage<AddressType, DataType>::proxy::def;
+
 
 	template<typename A, typename D>
 	addressReturnData<A, D>::addressReturnData(bool retFlag, std::tuple< poolsizetype<A>, memindextype<D>, memindextype<D>> info)
@@ -199,5 +198,11 @@ namespace BMMQ {
 		std::advance(memit, memindex);
 		memit = mem.insert(memit, 0);
 		return *memit;
+	}
+
+	template<typename AddressType, typename DataType>
+	typename SnapshotStorage<AddressType, DataType>::Proxy SnapshotStorage<AddressType, DataType>::operator[](AddressType idx) {
+		maxAccessed = std::max(maxAccessed, idx);
+		return Proxy(this, idx);
 	}
 }
