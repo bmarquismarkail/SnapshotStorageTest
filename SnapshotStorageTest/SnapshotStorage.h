@@ -85,7 +85,7 @@ namespace BMMQ {
 
 }
 
-#include "SnapshotStorage.hpp"
-#include "Proxy.hpp"
-#include "Iterator.hpp"
+#include "impl/SnapshotStorage.impl.hpp"
+#include "impl/subclass/Proxy.hpp"
+#include "impl/subclass/Iterator.hpp"
 #endif
