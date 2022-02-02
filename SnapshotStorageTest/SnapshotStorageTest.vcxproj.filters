@@ -26,13 +26,13 @@
     <ClInclude Include="SnapshotStorage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SnapshotStorage.impl.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Proxy.hpp">
+    <ClInclude Include="impl\SnapshotStorage.impl.hpp">
       <Filter>Header Files\impl</Filter>
     </ClInclude>
-    <ClInclude Include="Iterator.hpp">
+    <ClInclude Include="impl\subclass\Iterator.hpp">
+      <Filter>Header Files\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="impl\subclass\Proxy.hpp">
       <Filter>Header Files\impl</Filter>
     </ClInclude>
   </ItemGroup>
