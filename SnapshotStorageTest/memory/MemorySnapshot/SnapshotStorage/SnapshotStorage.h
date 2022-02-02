@@ -6,7 +6,7 @@
 #include <string_view>
 #include <iostream>
 
-#include "../MemorySnapshot.h"
+#include "../MemorySnapshot.hpp"
 
 template<typename T>
 using poolsizetype = typename std::vector< std::pair< T, std::size_t>>::size_type;
