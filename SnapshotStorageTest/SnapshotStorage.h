@@ -1,5 +1,5 @@
-#ifndef MEMORY_SNAPSHOT_H
-#define MEMORY_SNAPSHOT_H
+#ifndef SNAPSHOT_STORAGE_H
+#define SNAPSHOT_STORAGE_H
 
 #include <utility> //for std::tuple
 #include <vector>
@@ -88,4 +88,4 @@ namespace BMMQ {
 #include "impl/SnapshotStorage.impl.hpp"
 #include "impl/subclass/Proxy.hpp"
 #include "impl/subclass/Iterator.hpp"
-#endif
+#endif //SNAPSHOT_STORAGE_H
