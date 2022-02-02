@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 
-#include "SnapshotStorage.h"
+#include "memory/MemorySnapshot/SnapshotStorage/SnapshotStorage.h"
 
 using AddressType = unsigned short;
 using DataType = unsigned char;
