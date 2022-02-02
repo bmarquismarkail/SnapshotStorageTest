@@ -110,7 +110,7 @@ namespace BMMQ {
 
 	template<typename AddressType, typename DataType>
 	void SnapshotStorage<AddressType, DataType>::write
-	(DataType* stream, AddressType address, typename AddressType count) {
+	(DataType* stream, AddressType address, AddressType count) {
 
 		AddressType maxaddress = std::numeric_limits<AddressType>::max();
 		AddressType bounds = maxaddress - address;
