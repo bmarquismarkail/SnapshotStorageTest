@@ -21,6 +21,9 @@
     <ClCompile Include="SnapshotStorageTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MemorySnapshot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SnapshotStorage.h">
@@ -34,6 +37,9 @@
     </ClInclude>
     <ClInclude Include="impl\subclass\Proxy.hpp">
       <Filter>Header Files\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="MemorySnapshot.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
