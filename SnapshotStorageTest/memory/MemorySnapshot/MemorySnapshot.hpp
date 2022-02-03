@@ -2,6 +2,7 @@
 #define MEMORY_SNAPSHOT_H
 class MemorySnapshot
 {
+
 };
 
 #include "templ/MemorySnapshot.impl.hpp"

@@ -147,11 +147,13 @@
     <ClCompile Include="SnapshotStorageTest.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="impl\SnapshotStorage.impl.hpp" />
-    <ClInclude Include="impl\subclass\Iterator.hpp" />
-    <ClInclude Include="impl\subclass\Proxy.hpp" />
+    <ClInclude Include="memory\MemoryMap.hpp" />
     <ClInclude Include="memory\MemorySnapshot\MemorySnapshot.hpp" />
-    <ClInclude Include="SnapshotStorage.h" />
+    <ClInclude Include="memory\MemorySnapshot\SnapshotStorage\impl\SnapshotStorage.impl.hpp" />
+    <ClInclude Include="memory\MemorySnapshot\SnapshotStorage\impl\subclass\Iterator.hpp" />
+    <ClInclude Include="memory\MemorySnapshot\SnapshotStorage\impl\subclass\Proxy.hpp" />
+    <ClInclude Include="memory\MemorySnapshot\SnapshotStorage\SnapshotStorage.h" />
+    <ClInclude Include="memory\templ\MemoryMap.impl.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

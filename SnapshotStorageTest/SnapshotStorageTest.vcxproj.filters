@@ -26,20 +26,26 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SnapshotStorage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="impl\SnapshotStorage.impl.hpp">
-      <Filter>Header Files\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="impl\subclass\Iterator.hpp">
-      <Filter>Header Files\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="impl\subclass\Proxy.hpp">
-      <Filter>Header Files\impl</Filter>
-    </ClInclude>
     <ClInclude Include="memory\MemorySnapshot\MemorySnapshot.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="memory\MemoryMap.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="memory\templ\MemoryMap.impl.hpp">
+      <Filter>Header Files\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="memory\MemorySnapshot\SnapshotStorage\SnapshotStorage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="memory\MemorySnapshot\SnapshotStorage\impl\SnapshotStorage.impl.hpp">
+      <Filter>Header Files\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="memory\MemorySnapshot\SnapshotStorage\impl\subclass\Proxy.hpp">
+      <Filter>Header Files\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="memory\MemorySnapshot\SnapshotStorage\impl\subclass\Iterator.hpp">
+      <Filter>Header Files\impl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
