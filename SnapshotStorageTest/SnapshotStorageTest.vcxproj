@@ -150,7 +150,7 @@
     <ClInclude Include="impl\SnapshotStorage.impl.hpp" />
     <ClInclude Include="impl\subclass\Iterator.hpp" />
     <ClInclude Include="impl\subclass\Proxy.hpp" />
-    <ClInclude Include="MemorySnapshot.h" />
+    <ClInclude Include="memory\MemorySnapshot\MemorySnapshot.hpp" />
     <ClInclude Include="SnapshotStorage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

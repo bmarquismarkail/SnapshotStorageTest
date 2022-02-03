@@ -38,7 +38,7 @@
     <ClInclude Include="impl\subclass\Proxy.hpp">
       <Filter>Header Files\impl</Filter>
     </ClInclude>
-    <ClInclude Include="MemorySnapshot.h">
+    <ClInclude Include="memory\MemorySnapshot\MemorySnapshot.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
