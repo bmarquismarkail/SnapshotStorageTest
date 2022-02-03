@@ -143,7 +143,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MemorySnapshot.cpp" />
     <ClCompile Include="SnapshotStorageTest.cpp" />
   </ItemGroup>
   <ItemGroup>
