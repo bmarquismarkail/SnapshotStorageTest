@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 
+#include "memory/MemoryMap.hpp"
 #include "memory/MemorySnapshot/SnapshotStorage/SnapshotStorage.h"
 
 using AddressType = unsigned short;
@@ -8,8 +9,10 @@ using DataType = unsigned char;
 
 int main()
 {
+    //let's define a memorymap
+    BMMQ::MemoryMap<AddressType, DataType> m;
     //lets define a snapshotstorage class
-    BMMQ::SnapshotStorage<AddressType, DataType> s;
+    BMMQ::SnapshotStorage<AddressType, DataType> s(m);
 
     //allocation test: empty container
     DataType* stream = new DataType[5]{ 1, 2, 3, 4, 5 };
