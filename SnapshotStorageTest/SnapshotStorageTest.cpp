@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "memory/MemoryMap.hpp"
+#include "memory/MemorySnapshot/MemorySnapshot.hpp"
 #include "memory/MemorySnapshot/SnapshotStorage/SnapshotStorage.h"
 
 using AddressType = unsigned short;
@@ -11,24 +12,24 @@ int main()
 {
     //let's define a memorymap
     BMMQ::MemoryMap<AddressType, DataType> m;
-    //lets define a snapshotstorage class
-    BMMQ::SnapshotStorage<AddressType, DataType> s(m);
+    //let's define a MemorySnapshot
+    BMMQ::MemorySnapshot snapstore(m);
 
     //allocation test: empty container
     DataType* stream = new DataType[5]{ 1, 2, 3, 4, 5 };
-    s.write(stream, 10, 5);
+    snapstore.mem.write(stream, 10, 5);
 
     //allocation test: before prior allocation
     DataType* newStream = new DataType[5]{ 5, 4, 33, 2, 1 };
-    s.write(newStream, 0, 5);
+    snapstore.mem.write(newStream, 0, 5);
 
     //allocation test: after prior allocation, appending last entru
     DataType* newStream2 = new DataType[5]{ 6, 7, 88, 9, 10 };
-    s.write(newStream2, 15, 5);
+    snapstore.mem.write(newStream2, 15, 5);
 
     //read test: read all available, zero if not
     DataType output[20];
-    s.read(output, 0, 20);
+    snapstore.mem.read(output, 0, 20);
 
     //overwrite test: all
     DataType* newStream3 = new DataType[20];
@@ -36,10 +37,10 @@ int main()
         newStream3[i] = (i+1) *5;
     }
 
-    s.write(newStream3, 0, 20);
+    snapstore.mem.write(newStream3, 0, 20);
 
     //read test: read all available
-    s.read(output, 0, 20);
+    snapstore.mem.read(output, 0, 20);
 
     for (int i = 0; i < 20; i++) {
         std::cout << (int)output[i] << '|';
@@ -47,18 +48,18 @@ int main()
 
     //operator [] test
     std::cout << '\n';
-    std::cout << (int)s[0] << '\n';// should be five
-    std::cout << (int)s[20] << '\n';// should be zero, and allocation occurs on mem
-    std::cout << (int)s[19] << '\n';// should be 100
-    std::cout << (int)s[100] << '\n';// should be 0
+    std::cout << (int)snapstore.mem[0] << '\n';// should be five
+    std::cout << (int)snapstore.mem[20] << '\n';// should be zero, and allocation occurs on mem
+    std::cout << (int)snapstore.mem[19] << '\n';// should be 100
+    std::cout << (int)snapstore.mem[100] << '\n';// should be 0
 
 
     //iterator test
-    for (auto i = s.begin(); i != s.end(); ++i) {
+    for (auto i = snapstore.mem.begin(); i != snapstore.mem.end(); ++i) {
         std::cout << (int)*i << '|' ;
     }
     std::cout << std::endl;
-    std::for_each(s.begin(), s.end(), [](auto& s) {std::cout << (int)s << '|'; });
+    std::for_each(snapstore.mem.begin(), snapstore.mem.end(), [](auto& s) {std::cout << (int)s << '|'; });
     std::cout << std::endl;
     return 0;
 }
