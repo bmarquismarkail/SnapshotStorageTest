@@ -17,7 +17,7 @@ using memindextype = typename std::vector<T>::difference_type;
 namespace BMMQ {
 
 	template<typename A, typename D>
-	struct addressReturnData {
+	struct SnapshotAddressData {
 		bool isAddressInSnapshot;
 
 		// a tuple that houses:
@@ -25,7 +25,7 @@ namespace BMMQ {
 		// 2, the offset where the data resides relative to the pool's absolute offset
 		// and 3, the length from the data's position to the end of the pool's data.
 		std::tuple< poolsizetype<A>, memindextype<D>, memindextype<D>> info;
-		addressReturnData(bool retFlag, std::tuple< poolsizetype<A>, memindextype<D>, memindextype<D>> info);
+		SnapshotAddressData(bool retFlag, std::tuple< poolsizetype<A>, memindextype<D>, memindextype<D>> info);
 	};
 
 	template<typename AddressType, typename DataType>
@@ -33,7 +33,7 @@ namespace BMMQ {
 		MemoryMap<AddressType, DataType>& map;
 		std::vector< std::pair< AddressType, std::size_t>> pool;
 		std::vector<DataType> mem;
-		addressReturnData<AddressType, DataType> isAddressInSnapshot(AddressType at);
+		SnapshotAddressData<AddressType, DataType> isAddressInSnapshot(AddressType at);
 		AddressType maxAccessed;
 	public:
 		SnapshotStorage(MemoryMap<AddressType, DataType>& m);

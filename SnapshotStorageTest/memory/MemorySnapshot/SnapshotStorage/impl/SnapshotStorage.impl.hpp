@@ -6,11 +6,11 @@
 namespace BMMQ {
 
 	template<typename A, typename D>
-	addressReturnData<A, D>::addressReturnData(bool retFlag, std::tuple< poolsizetype<A>, memindextype<D>, memindextype<D>> info)
+	SnapshotAddressData<A, D>::SnapshotAddressData(bool retFlag, std::tuple< poolsizetype<A>, memindextype<D>, memindextype<D>> info)
 		: isAddressInSnapshot(retFlag), info(info) {}
 
 	template<typename AddressType, typename DataType>
-	addressReturnData<AddressType, DataType> SnapshotStorage<AddressType, DataType>::isAddressInSnapshot
+	SnapshotAddressData<AddressType, DataType> SnapshotStorage<AddressType, DataType>::isAddressInSnapshot
 	(AddressType at) {
 		bool isAddressInSnapshot = false;
 		auto entry_idx = 0;
@@ -58,7 +58,7 @@ namespace BMMQ {
 			}
 		}
 
-		return addressReturnData<AddressType, DataType>(isAddressInSnapshot, std::make_tuple(entry_idx, relofs, rellength));
+		return SnapshotAddressData<AddressType, DataType>(isAddressInSnapshot, std::make_tuple(entry_idx, relofs, rellength));
 	}
 
 	template<typename AddressType, typename DataType>
